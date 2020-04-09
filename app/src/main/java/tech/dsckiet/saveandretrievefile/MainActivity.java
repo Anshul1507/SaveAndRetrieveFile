@@ -40,14 +40,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     private ProgressDialog mProgressDialog;
-    private String fileName ;
+    private String fileName;
     private Button mButton;
     private TextView mTextView;
     private String[] files = new String[4];
-    ArrayDeque<String> deque,names = new ArrayDeque<String>(4);
+    ArrayDeque<String> deque, names = new ArrayDeque<String>(4);
     private MediaPlayer mp;
     private Object[] sizeUrlDeque;
-    private int idx=0;
+    private int idx = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,24 +58,24 @@ public class MainActivity extends AppCompatActivity {
         mTextView = findViewById(R.id.textView);
 
         deque = new ArrayDeque<String>();
-        names = new ArrayDeque<String >();
+        names = new ArrayDeque<String>();
         mProgressDialog = new ProgressDialog(this);
 
         mProgressDialog.show();
         String baseURL = "https://d2to6du2km6iv2.cloudfront.net/flexible/";
 
-        String[] urls = {baseURL + "clip.mp3",baseURL+"chunk.mp3",baseURL+"characteristic.mp3"};
+        String[] urls = {baseURL + "clip.mp3", baseURL + "chunk.mp3", baseURL + "characteristic.mp3"};
         initialTask(urls);
 
-        final String[] url2 = {baseURL + "car.mp3",baseURL + "balloon.mp3",baseURL+"casual.mp3"};
+        final String[] url2 = {baseURL + "car.mp3", baseURL + "balloon.mp3", baseURL + "casual.mp3"};
 
-            mButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                        submitButton(getApplicationContext(), url2);
-                }
-            });
+                submitButton(getApplicationContext(), url2);
+            }
+        });
     }
 
     @Override
@@ -84,60 +84,57 @@ public class MainActivity extends AppCompatActivity {
         mp.stop();
         mp.release();
     }
-    private void submitButton(Context context,String url2[]){
 
-        if(idx < 3) {
+    private void submitButton(Context context, String url2[]) {
+
+        if (idx < 3) {
             new DownloadFileAsync().execute(url2[idx]);
             idx++;
         }
         sizeUrlDeque = deque.toArray();
-        if(deque.size()>0) {
+        if (deque.size() > 0) {
             playMedia(deque.peek());
             context.deleteFile(deque.getFirst());
             files = context.fileList();
-            for (int i = 0; i < files.length; i++) {
-                Log.i("files in cache ->", files[i]);
-            }
+//            for (int i = 0; i < files.length; i++) {
+//                Log.i("files in cache ->", files[i]);
+//            }
             deque.removeFirst();
             names.removeFirst();
 
-            for (Iterator itr = deque.iterator(); itr.hasNext(); ) {
-                String url = itr.next().toString();
-                Log.i("Deque Left >> ", url);
-            }
-
-            for (Iterator itr = deque.iterator(); itr.hasNext(); ) {
-                String url = itr.next().toString();
-                Log.i("Deque New >> ", url);
-            }
-        }else{
-            Toast.makeText(context,"End",Toast.LENGTH_SHORT).show();
+//            for (Iterator itr = deque.iterator(); itr.hasNext(); ) {
+//                String url = itr.next().toString();
+//                Log.i("Deque Left >> ", url);
+//            }
+//
+//            for (Iterator itr = deque.iterator(); itr.hasNext(); ) {
+//                String url = itr.next().toString();
+//                Log.i("Deque New >> ", url);
+//            }
+        } else {
+            Toast.makeText(context, "End", Toast.LENGTH_SHORT).show();
         }
 
     }
 
-
-    private void playMedia(String file){
-        mp =new MediaPlayer();
-        try{
+    private void playMedia(String file) {
+        mp = new MediaPlayer();
+        try {
             mp.setDataSource(getFilesDir() + "/" + file);//Write your location here
             mp.prepare();
             mp.start();
 
-        }catch(Exception e){e.printStackTrace();}
-    }
-
-    public void initialTask(String[] urls){
-        for(int i=0;i<3;i++){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                }else{
-                    new DownloadFileAsync().execute(urls[i]);
-                }
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
+    public void initialTask(String[] urls) {
+        for (int i = 0; i < 3; i++) {
+            new DownloadFileAsync().execute(urls[i]);
+        }
+    }
+
 
     private class DownloadFileAsync extends AsyncTask<String, String, String> {
 
@@ -161,19 +158,18 @@ public class MainActivity extends AppCompatActivity {
                 stream = urlcon.getInputStream();
 
                 BufferedInputStream reader = new BufferedInputStream(stream);
-                fos = openFileOutput(fileName,MODE_PRIVATE);
-                Log.i("TAG", "doInBackground: " + fileName.substring(0,fileName.length()-4));
+                fos = openFileOutput(fileName, MODE_PRIVATE);
+//                Log.i("TAG", "doInBackground: " + fileName.substring(0, fileName.length() - 4));
                 deque.add(fileName);
-                names.add(fileName.substring(0,fileName.length()-4));
+                names.add(fileName.substring(0, fileName.length() - 4));
                 int times = -1;
                 while ((times = reader.read()) != -1) {
                     fos.write(times);
                 }
-                Log.i("file saved to", getFilesDir() + "/" + fileName);
+//                Log.i("file saved to", getFilesDir() + "/" + fileName);
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-            finally {
+            } finally {
                 if (stream != null) {
                     try {
                         stream.close();
@@ -195,8 +191,9 @@ public class MainActivity extends AppCompatActivity {
             return null;
 
         }
+
         protected void onProgressUpdate(String... progress) {
-            Log.d("Downloading..",progress[0]);
+//            Log.d("Downloading..", progress[0]);
         }
 
         @Override
