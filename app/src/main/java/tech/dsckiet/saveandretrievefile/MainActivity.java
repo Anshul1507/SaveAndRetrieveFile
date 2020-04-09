@@ -10,6 +10,8 @@ import android.os.Environment;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 URLConnection urlcon = url.openConnection();
                 stream = urlcon.getInputStream();
 
-                InputStreamReader reader = new InputStreamReader(stream);
+                BufferedInputStream reader = new BufferedInputStream(stream);
                 fos = new FileOutputStream(f.getPath());
 
                 int times = -1;
